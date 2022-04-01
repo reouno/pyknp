@@ -1,6 +1,6 @@
 import os
 import re
-import signal
+import threading
 import socket
 import subprocess
 import sys
@@ -71,8 +71,8 @@ class Subprocess(object):
         def alarm_handler(signum, frame):
             raise subprocess.TimeoutExpired(self.process_command, self.process_timeout)
 
-        signal.signal(signal.SIGALRM, alarm_handler)
-        signal.alarm(self.process_timeout)
+        alarm = threading.Timer(self.process_timeout, alarm_handler)
+        alarm.start()
         result = ''
         try:
             self.process.stdin.write(sentence.encode('utf-8'))
@@ -83,7 +83,7 @@ class Subprocess(object):
                     break
                 result += line + '\n'
         finally:
-            signal.alarm(0)
+            alarm.cancel()
         self.process.stdout.flush()
         return result
 
