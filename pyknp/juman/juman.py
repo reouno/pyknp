@@ -4,8 +4,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import distutils.spawn
 import os
+import shutil
 import sys
 import unittest
 
@@ -62,7 +62,7 @@ class Juman(object):
 
         if self.rcfile and not os.path.isfile(os.path.expanduser(self.rcfile)):
             raise Exception("Can't read rcfile (%s)!" % self.rcfile)
-        if distutils.spawn.find_executable(self.command) is None:
+        if shutil.which(self.command) is None:
             raise Exception("Can't find JUMAN command: %s" % self.command)
 
     def juman_lines(self, input_str):
